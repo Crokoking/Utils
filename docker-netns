@@ -1,0 +1,12 @@
+#!/bin/bash
+CID=$1
+shift
+CMD=$@
+
+TASKS=/sys/fs/cgroup/devices/docker/$CID*/tasks
+PID=$(head -n 1 $TASKS)
+echo "TASKS=%TASKS"
+echo "PID=$PID"
+mkdir -p /var/run/netns
+ln -sf /proc/$PID/ns/net /var/run/netns/$CID
+ip netns exec $CID $CMD
